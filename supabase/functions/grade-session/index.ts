@@ -38,11 +38,10 @@ Deno.serve(async (req: Request) => {
   try {
     const payload = (await req.json()) as Payload;
 
-    const apiKey = Deno.env.get("GEMINI_API_KEY") ?? Deno.env.get("AI_API_KEY") ?? "";
-    const model = Deno.env.get("AI_MODEL") ?? "gemini-2.0-flash";
-    const provider = Deno.env.get("AI_PROVIDER") ?? "google";
+    const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY") ?? "";
+    const model = "claude-haiku-4-5-20251001";
 
-    if (!apiKey) {
+    if (!anthropicKey) {
       return new Response(
         JSON.stringify({ error: "No AI API key configured." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -50,13 +49,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const prompt = buildPrompt(payload);
-
-    let result: string;
-    if (provider === "google" || provider === "gemini") {
-      result = await callGemini(apiKey, model, prompt);
-    } else {
-      result = await callOpenAICompatible(apiKey, model, prompt);
-    }
+    const result = await callAnthropic(anthropicKey, model, prompt);
 
     const parsed = parseResult(result);
 
@@ -127,44 +120,27 @@ function buildPrompt(p: Payload): string {
   return s;
 }
 
-async function callGemini(apiKey: string, model: string, prompt: string): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const resp = await fetch(url, {
+async function callAnthropic(apiKey: string, model: string, prompt: string): Promise<string> {
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 1200 },
-    }),
-  });
-  if (!resp.ok) {
-    const t = await resp.text();
-    throw new Error(`Gemini error ${resp.status}: ${t}`);
-  }
-  const data = await resp.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Empty Gemini response");
-  return text;
-}
-
-async function callOpenAICompatible(apiKey: string, model: string, prompt: string): Promise<string> {
-  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
     body: JSON.stringify({
       model,
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.4,
       max_tokens: 1200,
+      messages: [{ role: "user", content: prompt }],
     }),
   });
   if (!resp.ok) {
     const t = await resp.text();
-    throw new Error(`AI error ${resp.status}: ${t}`);
+    throw new Error(`Anthropic error ${resp.status}: ${t}`);
   }
   const data = await resp.json();
-  const text = data?.choices?.[0]?.message?.content;
-  if (!text) throw new Error("Empty AI response");
+  const text = data?.content?.[0]?.text;
+  if (!text) throw new Error("Empty Anthropic response");
   return text;
 }
 
