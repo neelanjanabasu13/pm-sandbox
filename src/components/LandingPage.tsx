@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase, type Question } from "../lib/supabase";
-import { Sparkles, Search, ArrowRight, ChevronDown, ChevronRight, Shuffle, Layers, Zap } from "lucide-react";
+import { Sparkles, Search, ArrowRight, ChevronDown, ChevronRight, Shuffle, Layers, Zap, Globe, Twitter } from "lucide-react";
 
 interface LandingPageProps {
   onStartSession: (q: Question) => void;
@@ -394,6 +394,30 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
           </div>
         )}
       </div>
+
+      <footer className="border-t-2 border-ink/10 mt-16 pt-6 pb-8">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <span className="font-body text-sm text-gray-dark">Made by Neelanjana Basu</span>
+          <a
+            href="https://neelanjanabasu.lovable.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-mid hover:text-ink transition-colors"
+            aria-label="Portfolio"
+          >
+            <Globe className="w-4 h-4" />
+          </a>
+          <a
+            href="https://x.com/nee13njana"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-mid hover:text-ink transition-colors"
+            aria-label="X (Twitter)"
+          >
+            <Twitter className="w-4 h-4" />
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
