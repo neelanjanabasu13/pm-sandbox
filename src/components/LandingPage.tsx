@@ -20,6 +20,7 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
   const [loading, setLoading] = useState(true);
   const [expandedCompanies, setExpandedCompanies] = useState<Set<string>>(new Set());
   const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set());
+  const [visibleCount, setVisibleCount] = useState(5);
   const [drawing, setDrawing] = useState(false);
   const deckRef = useRef<Question[]>([]);
   const [backfilling, setBackfilling] = useState(false);
@@ -161,6 +162,13 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
     setExpandedTypes(new Set());
   };
 
+  const visibleCompanies = sortedCompanies.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedCompanies.length;
+
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [filterType, searchQuery]);
+
   return (
     <div className="space-y-8 fade-in">
       {/* ── Daily Question ─────────────────────────── */}
@@ -291,7 +299,7 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
 
         {/* Expand/collapse all */}
         {sortedCompanies.length > 0 && (
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
             <button onClick={expandAll} className="font-mono text-xs text-gray-dark hover:text-ink underline">
               Expand all
             </button>
@@ -307,7 +315,7 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
           <p className="font-body text-gray-mid">Loading questions...</p>
         ) : (
           <div className="space-y-2">
-            {sortedCompanies.map((company) => {
+            {visibleCompanies.map((company) => {
               const questions = groupedByCompany[company];
               const isExpanded = expandedCompanies.has(company);
               return (
@@ -390,6 +398,23 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
               <p className="font-body text-gray-mid text-center py-8">
                 No questions match your search.
               </p>
+            )}
+            {hasMore && (
+              <div className="flex items-center justify-center gap-3 pt-4">
+                <button
+                  onClick={() => setVisibleCount((c) => c + 5)}
+                  className="btn-outline flex items-center gap-2"
+                >
+                  <ChevronDown className="w-4 h-4" />
+                  See more
+                </button>
+                <button
+                  onClick={() => setVisibleCount(sortedCompanies.length)}
+                  className="font-mono text-xs text-gray-dark hover:text-ink underline"
+                >
+                  See all ({sortedCompanies.length})
+                </button>
+              </div>
             )}
           </div>
         )}
