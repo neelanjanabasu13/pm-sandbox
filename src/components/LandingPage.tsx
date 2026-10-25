@@ -120,7 +120,9 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
   };
 
   const filteredBank = bankQuestions.filter((q) => {
-    if (filterType !== "all" && q.type !== filterType) return false;
+    if (filterType === "ai_pm") {
+      if (q.source_metadata?.collection !== "ai_pm_question_bank") return false;
+    } else if (filterType !== "all" && q.type !== filterType) return false;
     if (searchQuery && !q.text.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -284,6 +286,12 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
             className={`chip ${filterType === "strategy" ? "chip-selected" : ""}`}
           >
             Strategy
+          </button>
+          <button
+            onClick={() => setFilterType("ai_pm")}
+            className={`chip ${filterType === "ai_pm" ? "chip-selected" : ""}`}
+          >
+            AI PM
           </button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-mid" />

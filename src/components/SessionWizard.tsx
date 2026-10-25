@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { ArrowLeft, ArrowRight, Lock, Check, Send, Plus, X, RotateCcw, Zap, Clock, Loader, AlertCircle } from "lucide-react";
 import type { Question } from "../lib/supabase";
+import SampleAnswer from "./SampleAnswer";
 import {
   STAGE_DEFS,
   STAGE_ORDER,
@@ -240,6 +241,8 @@ export default function SessionWizard({ question, onExit, onComplete }: SessionW
           </div>
         </div>
       </div>
+
+      <SampleAnswer question={question} />
 
       {/* Stage progress bar */}
       <div className="flex items-center gap-1 flex-wrap">

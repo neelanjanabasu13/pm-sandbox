@@ -61,3 +61,20 @@ Actively built as a personal project. The question bank is largely pre-populated
 ## Acknowledgements
 
 Question bank adapted from a community-maintained PM interview question collection. Built with [bolt.new](https://bolt.new).
+
+## AI PM questions and sample answers
+
+The **AI PM** filter selects all 167 prompts from the 24 October workbook. Each includes an authored sample answer covering framing, recommendation, rationale, metrics, tradeoffs, and validation. Use **Reveal sample answer** during practice or on the session summary to compare your reasoning. These are illustrative practice answers, not company-endorsed responses or quotations from the question sources. Personal-experience examples are explicitly hypothetical.
+
+Questions use the existing product sense, execution, and strategy drills, including on-demand practice options and AI feedback. Original categories, enterprise-agent relevance, source URLs, company attribution, and verbatim flags are retained in `source_metadata` and `data/ai_pm_questions.json`; answers are in `data/ai_pm_answers.json`. Figures and hypothetical capabilities in prompts are scenario premises, not verified current product claims.
+
+Apply `supabase/migrations/20261025143000_add_ai_pm_question_bank.sql` through the normal Supabase migration process. It adds the collection and answers, enriches existing exact-text matches without changing their IDs or practice history, and can be reapplied without duplicating questions. No access policies change. Deploy the frontend as well to expose the AI PM filter and answer panels. Repository changes alone do not update the live database.
+
+To rebuild and check the collection:
+
+```bash
+node scripts/build-ai-answers.mjs
+node scripts/build-ai-question-migration.mjs
+node scripts/build-ai-answers.mjs --check
+node scripts/build-ai-question-migration.mjs --check
+```
