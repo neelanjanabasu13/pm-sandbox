@@ -26,6 +26,7 @@ import {
   TARGET_SECONDS,
   emptyGymState,
   generateDefaultContent,
+  isCompleteGymContent,
 } from "../lib/gym";
 
 export interface SessionData {
@@ -51,7 +52,7 @@ export default function SessionWizard({ question, onExit, onComplete }: SessionW
   // Fetch question-specific content from AI if none authored.
   useEffect(() => {
     const raw = question.chip_options as unknown as GymContent | null;
-    const hasAuthored = raw && raw.stages && Object.keys(raw.stages).length > 0;
+    const hasAuthored = isCompleteGymContent(type, raw);
     if (hasAuthored) return;
     let cancelled = false;
     setContentLoading(true);
@@ -65,6 +66,7 @@ export default function SessionWizard({ question, onExit, onComplete }: SessionW
         if (!r.ok) throw new Error(`Failed (${r.status})`);
         const data = await r.json();
         if (data.error) throw new Error(data.error);
+        if (!isCompleteGymContent(type, data.content)) throw new Error("The exercise is missing required practice stages. Please retry.");
         if (!cancelled && data.content) {
           setContent(data.content as GymContent);
         }
@@ -74,7 +76,7 @@ export default function SessionWizard({ question, onExit, onComplete }: SessionW
       })
       .finally(() => { if (!cancelled) setContentLoading(false); });
     return () => { cancelled = true; };
-  }, [question.id, question.chip_options]);
+  }, [question.id, question.chip_options, type]);
 
   const [state, setState] = useState<GymState>(emptyGymState);
   const [currentStage, setCurrentStage] = useState(order[0]);
@@ -361,7 +363,7 @@ export default function SessionWizard({ question, onExit, onComplete }: SessionW
 // ── Parse content from question.chip_options ─────────────────────────────
 function parseContent(q: Question): GymContent {
   const raw = q.chip_options as unknown as GymContent;
-  if (raw && raw.stages && Object.keys(raw.stages).length > 0) return raw;
+  if (isCompleteGymContent(q.type, raw)) return raw;
   return generateDefaultContent(q.type as QuestionType);
 }
 
