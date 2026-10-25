@@ -12,6 +12,31 @@ const TYPE_LABELS: Record<string, string> = {
   strategy: "Strategy",
 };
 
+const AI_COMPANIES = [
+  "Anthropic",
+  "OpenAI",
+  "Google DeepMind",
+  "Meta AI",
+  "Mistral AI",
+  "Hugging Face",
+  "Cohere",
+  "Scale AI",
+  "xAI",
+  "Perplexity",
+  "Stability AI",
+  "Inflection AI",
+  "Adept",
+  "Character.AI",
+  "Runway",
+];
+
+const isAiCompany = (company: string | null | undefined): boolean => {
+  if (!company) return false;
+  const c = company.toLowerCase();
+  return AI_COMPANIES.some((a) => c === a.toLowerCase())
+    || /\b(anthropic|openai|deepmind|mistral|hugging|cohere|scale ai|\bxai\b|perplexity|stability|inflection|adept|character\.ai|runway)\b/i.test(c);
+};
+
 export default function LandingPage({ onStartSession }: LandingPageProps) {
   const [dailyQuestion, setDailyQuestion] = useState<Question | null>(null);
   const [bankQuestions, setBankQuestions] = useState<Question[]>([]);
@@ -120,7 +145,8 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
   };
 
   const filteredBank = bankQuestions.filter((q) => {
-    if (filterType !== "all" && q.type !== filterType) return false;
+    if (filterType === "ai" && !isAiCompany(q.source_company)) return false;
+    if (["product_sense", "execution", "strategy"].includes(filterType) && q.type !== filterType) return false;
     if (searchQuery && !q.text.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -284,6 +310,12 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
             className={`chip ${filterType === "strategy" ? "chip-selected" : ""}`}
           >
             Strategy
+          </button>
+          <button
+            onClick={() => setFilterType("ai")}
+            className={`chip ${filterType === "ai" ? "chip-selected" : ""}`}
+          >
+            AI
           </button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-mid" />
