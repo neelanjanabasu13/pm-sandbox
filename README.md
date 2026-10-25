@@ -64,7 +64,7 @@ Question bank adapted from a community-maintained PM interview question collecti
 
 ## AI PM questions and sample answers
 
-The **AI PM** filter selects all 167 prompts from the 24 October workbook. Each includes an authored sample answer covering framing, recommendation, rationale, metrics, tradeoffs, and validation. Use **Reveal sample answer** during practice or on the session summary to compare your reasoning. These are illustrative practice answers, not company-endorsed responses or quotations from the question sources. Personal-experience examples are explicitly hypothetical.
+The **AI** filter selects all 167 prompts from the 24 October workbook. Questions without a known company appear under **Others**. Each includes an authored sample answer covering framing, recommendation, rationale, metrics, tradeoffs, and validation. Use **Reveal sample answer** during practice or on the session summary to compare your reasoning. These are illustrative practice answers, not company-endorsed responses or quotations from the question sources. Personal-experience examples are explicitly hypothetical.
 
 Questions use the existing product sense, execution, and strategy drills, including on-demand practice options and AI feedback. Original categories, enterprise-agent relevance, source URLs, company attribution, and verbatim flags are retained in `source_metadata` and `data/ai_pm_questions.json`; answers are in `data/ai_pm_answers.json`. Figures and hypothetical capabilities in prompts are scenario premises, not verified current product claims.
 

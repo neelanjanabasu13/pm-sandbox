@@ -130,7 +130,8 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
   // Group by company
   const groupedByCompany: Record<string, Question[]> = {};
   filteredBank.forEach((q) => {
-    const company = q.source_company || "Unknown";
+    const sourceCompany = q.source_company?.trim();
+    const company = !sourceCompany || /^(unknown|unattributed)$/i.test(sourceCompany) ? "Others" : sourceCompany;
     if (!groupedByCompany[company]) groupedByCompany[company] = [];
     groupedByCompany[company].push(q);
   });
@@ -291,7 +292,7 @@ export default function LandingPage({ onStartSession }: LandingPageProps) {
             onClick={() => setFilterType("ai_pm")}
             className={`chip ${filterType === "ai_pm" ? "chip-selected" : ""}`}
           >
-            AI PM
+            AI
           </button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-mid" />
