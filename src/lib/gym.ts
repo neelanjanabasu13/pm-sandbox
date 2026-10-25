@@ -51,6 +51,19 @@ export interface GymContent {
   stages: Record<string, StageItem[]>; // stageKey -> authored rows
 }
 
+// A nonempty stages object alone is insufficient: it can hide missing user,
+// pain, solution, or metric stages and strand the rating-and-commit flow.
+export function isCompleteGymContent(type: QuestionType, value: unknown): value is GymContent {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as GymContent;
+  if (!Array.isArray(candidate.framing) || candidate.framing.length === 0 ||
+      candidate.framing.some(f => !f.id || !f.prompt || !Array.isArray(f.options) || f.options.length < 2)) return false;
+  const required = type === 'product_sense' ? ['segments', 'pains', 'solutions', 'metrics']
+    : type === 'execution' ? ['hypotheses', 'metrics'] : ['options'];
+  return required.every(key => Array.isArray(candidate.stages?.[key]) && candidate.stages[key].length > 0 &&
+    candidate.stages[key].every(item => item.id && item.name && item.desc));
+}
+
 // ── Runtime state ────────────────────────────────────────────────────────
 export interface GymState {
   framingAnswers: Record<string, string>; // framingQuestionId -> selected option

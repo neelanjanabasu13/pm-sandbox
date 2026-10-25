@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { ArrowLeft, Send, Save, Check, Award, Loader, AlertCircle } from "lucide-react";
 import type { SessionData } from "./SessionWizard";
 import type { Question } from "../lib/supabase";
+import SampleAnswer from "./SampleAnswer";
 import {
   STAGE_DEFS,
   STAGE_ORDER,
@@ -178,6 +179,8 @@ export default function SummaryView({ sessionData, question, onExit, onShowAuth 
       </div>
 
       {/* Question */}
+      <SampleAnswer question={question} />
+
       <div className="sketch-card">
         <p className="font-hand text-lg font-bold leading-tight">{question.text}</p>
         <div className="flex items-center gap-3 mt-2 flex-wrap">

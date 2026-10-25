@@ -61,3 +61,25 @@ Actively built as a personal project. The question bank is largely pre-populated
 ## Acknowledgements
 
 Question bank adapted from a community-maintained PM interview question collection. Built with [bolt.new](https://bolt.new).
+
+## AI PM questions and sample answers
+
+The **AI** filter selects all 167 prompts from the 24 October workbook. Questions without a known company appear under **Others**. Each includes an authored sample answer covering framing, recommendation, rationale, metrics, tradeoffs, and validation. Use **Reveal sample answer** during practice or on the session summary to compare your reasoning. These are illustrative practice answers, not company-endorsed responses or quotations from the question sources. Personal-experience examples are explicitly hypothetical.
+
+Every question includes prepopulated interactive practice content in `data/ai_pm_drills.json`, using the existing rating-and-commit stages. Product sense has 3 framing questions, 4 user groups, 8 linked pains, 5 solutions with pain tags, and 4 metrics including a guardrail. Execution has 2 framing questions, 4 hypotheses, and 4 metrics. Strategy has 2 framing questions and 4 strategic options. Imported questions do not need a first-open generation call. The collection contains 35 Anthropic questions across the three types.
+
+Original categories, enterprise-agent relevance, source URLs, company attribution, and verbatim flags are retained in `source_metadata` and `data/ai_pm_questions.json`; written answers are in `data/ai_pm_answers.json`. Figures and hypothetical capabilities in prompts are scenario premises, not verified current product claims.
+
+Apply `supabase/migrations/20261025143000_add_ai_pm_question_bank.sql` through the normal Supabase migration process. It supplies questions, written answers, and full interactive stages. It preserves matching question IDs and practice history, repairs incomplete or earlier imported drill content, and preserves complete pre-existing drills. Reapplying it does not duplicate questions. No access policies change. Deploy the frontend as well to expose the AI filter and answer panels. Repository changes alone do not update the live database.
+
+To rebuild and check the collection:
+
+```bash
+node scripts/build-ai-answers.mjs
+node scripts/build-ai-drills.mjs
+node scripts/build-ai-question-migration.mjs
+node scripts/build-ai-answers.mjs --check
+node scripts/build-ai-drills.mjs --check
+node scripts/build-ai-question-migration.mjs --check
+node scripts/check-ai-content.mjs
+```

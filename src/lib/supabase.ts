@@ -5,6 +5,16 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export interface SampleAnswerContent {
+  label: string;
+  framing: string;
+  recommendation: string;
+  rationale: string;
+  metrics: string;
+  tradeoff: string;
+  validation: string;
+}
+
 export interface Question {
   id: string;
   text: string;
@@ -13,6 +23,8 @@ export interface Question {
   interview_type: string | null;
   job_title: string | null;
   source_companies: string[];
+  source_metadata?: { collection?: string; [key: string]: unknown };
+  sample_answer?: SampleAnswerContent | null;
   is_daily: boolean;
   daily_date: string | null;
   chip_options: Record<string, unknown>;
